@@ -48,10 +48,7 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="form-label-row">
-                        <label for="password">Password</label>
-                        <a href="{{ route('forgot') }}" class="form-link">Lupa Password?</a>
-                    </div>
+                    <label for="password">Password</label>
                     <input 
                         type="password" 
                         name="password" 

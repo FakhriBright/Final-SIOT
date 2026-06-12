@@ -950,8 +950,8 @@ a:hover {
 
 .filter-bar {
     position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-    border: 1px solid rgba(226, 232, 240, 0.35);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 1rem;
     margin-bottom: var(--spacing-lg);
@@ -960,30 +960,7 @@ a:hover {
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-md);
-    box-shadow:
-        0 10px 40px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-}
-
-/* soft decorative glow */
-.filter-bar::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 18px;
-    background:
-        radial-gradient(600px circle at 15% 25%, var(--primary-glow), transparent 40%),
-        radial-gradient(500px circle at 85% 10%, rgba(34, 211, 238, 0.25), transparent 38%),
-        radial-gradient(400px circle at 65% 90%, rgba(16, 185, 129, 0.18), transparent 35%);
-    pointer-events: none;
-    opacity: 0.9;
-}
-
-.filter-bar > * {
-    position: relative;
-    z-index: 1;
+    box-shadow: var(--shadow-sm);
 }
 
 
@@ -998,9 +975,9 @@ a:hover {
 
 .filter-select {
     padding: 0.65rem 0.9rem;
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: rgba(241, 245, 249, 0.05);
+    background-color: var(--bg-input);
     color: var(--text-primary);
     outline: none;
     cursor: pointer;
@@ -1009,39 +986,46 @@ a:hover {
     transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
 
+.filter-select option {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
 .filter-select:focus {
-    border-color: rgba(99, 102, 241, 0.55);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 .search-input {
     min-width: 240px;
     padding: 0.65rem 0.9rem;
     border-radius: 14px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    background-color: rgba(241, 245, 249, 0.05);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-input);
     color: var(--text-primary);
     outline: none;
     transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
 .search-input:focus {
-    border-color: rgba(99, 102, 241, 0.55);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
 }
 
 
 .table-wrapper {
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-    border: 1px solid rgba(226, 232, 240, 0.28);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 18px;
     overflow: hidden;
-    box-shadow:
-        0 12px 50px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+    box-shadow: var(--shadow-sm);
     margin-bottom: var(--spacing-lg);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
 }
 
 .table-responsive {
@@ -1058,25 +1042,25 @@ a:hover {
 }
 
 .custom-table thead {
-    background: rgba(241, 245, 249, 0.04);
+    background: var(--bg-input);
 }
 
 .custom-table th {
     padding: 1rem 1rem;
     font-weight: 700;
     color: var(--text-secondary);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    border-bottom: 1px solid var(--border-color);
     font-family: var(--font-heading);
     letter-spacing: -0.01em;
     position: sticky;
     top: 0;
     z-index: 1;
-    background: linear-gradient(180deg, rgba(241,245,249,0.07), rgba(241,245,249,0.03));
+    background: var(--bg-input);
 }
 
 .custom-table td {
     padding: 0.95rem 1rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
     vertical-align: middle;
 }
@@ -1116,7 +1100,7 @@ a:hover {
     color: var(--text-primary);
 }
 
-/* Pagination */
+/* Pagination - Fix Messy Layout */
 .pagination-area {
     margin-top: var(--spacing-lg);
 }
@@ -1125,6 +1109,106 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+/* Override Laravel's default pagination */
+.pagination-area nav > div:first-child {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Pagination links container */
+.pagination-area nav > div:last-child,
+.pagination-area nav > div:nth-child(2) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* All pagination buttons */
+.pagination-area nav span[aria-disabled],
+.pagination-area nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pagination-area nav a:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    transform: none;
+}
+
+/* Active/current page */
+.pagination-area nav span[aria-current="page"] > span,
+.pagination-area nav .relative > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: var(--primary);
+    color: #ffffff;
+    border: 1px solid var(--primary);
+}
+
+/* Disabled prev/next */
+.pagination-area nav span[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Ellipsis */
+.pagination-area nav span.relative span {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    min-width: auto;
+    padding: 0 4px;
+}
+
+/* Full-width layout fix for filter-bar as pagination wrapper */
+.pagination-area.filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.pagination-area.filter-bar > div:first-child {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.pagination-area.filter-bar > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
 }
 
 /* ==========================================================================
@@ -1429,7 +1513,8 @@ a:hover {
 .form-control:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-glow);
-    background-color: #ffffff;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
 }
 
 /* Clean Button Styles */
@@ -1453,24 +1538,48 @@ a:hover {
 }
 
 .btn-secondary {
-    background-color: #ffffff;
+    background-color: var(--bg-input);
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
 }
 
 .btn-secondary:hover {
-    background-color: var(--bg-input);
+    background-color: var(--border-hover);
     color: var(--text-primary);
+    border-color: var(--border-hover);
 }
 
-/* E-Paper LCD Screen Style (Clean light theme console) */
+/* Logout button - red danger hover */
+.btn-logout {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-logout:hover {
+    background-color: var(--danger-bg);
+    border-color: var(--danger);
+    color: var(--danger);
+    transform: none;
+}
+
+/* E-Paper LCD Screen Style (Clean, theme-adaptive) */
 .lcd-preview-screen {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 14px 18px;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    color: #0f172a;
+    color: var(--text-primary);
     text-shadow: none;
     min-height: 58px;
     display: flex;
@@ -1479,7 +1588,7 @@ a:hover {
     overflow: hidden;
     font-weight: 600;
     letter-spacing: 0.05em;
-    box-shadow: none;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 .lcd-preview-screen::before {
     display: none; /* remove scanlines */
@@ -1490,20 +1599,20 @@ a:hover {
     word-break: break-all;
     z-index: 1;
     font-size: 0.95rem;
-    color: #0f766e;
+    color: var(--primary);
 }
 .lcd-blink-cursor {
     display: inline-block;
     width: 8px;
     height: 14px;
-    background-color: #0f766e;
+    background-color: var(--primary);
     margin-left: 4px;
     animation: lcdBlink 1s step-end infinite;
     vertical-align: middle;
 }
 @keyframes lcdBlink {
     from, to { background-color: transparent }
-    50% { background-color: #0f766e }
+    50% { background-color: var(--primary) }
 }
 
 /* Custom Servo Dial / Gauge styles (Minimal Light style) */
@@ -1555,17 +1664,17 @@ a:hover {
     background: #3b82f6; /* clean flat blue */
 }
 
-/* Status Badges */
+/* Status Badges - Theme adaptive */
 .badge-online {
-    background-color: #e6f4ea !important;
-    color: #137333 !important;
-    border: 1px solid rgba(19, 115, 51, 0.1) !important;
+    background-color: var(--success-bg) !important;
+    color: var(--success) !important;
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
 }
 
 .badge-offline {
-    background-color: #fce8e6 !important;
-    color: #c5221f !important;
-    border: 1px solid rgba(197, 34, 31, 0.1) !important;
+    background-color: var(--danger-bg) !important;
+    color: var(--danger) !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
 }
 
 .auth-body {
