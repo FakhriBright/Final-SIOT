@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -154,7 +154,7 @@
         function getSavedTheme() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) return savedTheme;
-            return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            return 'light';
         }
         
         // Apply theme

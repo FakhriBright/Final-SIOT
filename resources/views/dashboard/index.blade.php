@@ -83,7 +83,10 @@
             </div>
         </div>
         <div class="stat-value" id="suhu-val">-- °C</div>
-        <div class="stat-meta">Menerima telemetri...</div>
+        <div class="telemetry-progress">
+            <div class="telemetry-progress-fill temp-fill" id="suhu-progress" style="width: 0%;"></div>
+        </div>
+        <div class="stat-meta" id="suhu-meta">Menerima telemetri...</div>
     </div>
 
     <!-- Kelembapan Card -->
@@ -98,7 +101,10 @@
             </div>
         </div>
         <div class="stat-value" id="kelembapan-val">-- %</div>
-        <div class="stat-meta">Menerima telemetri...</div>
+        <div class="telemetry-progress">
+            <div class="telemetry-progress-fill humidity-fill" id="kelembapan-progress" style="width: 0%;"></div>
+        </div>
+        <div class="stat-meta" id="kelembapan-meta">Menerima telemetri...</div>
     </div>
 
     <!-- Servo Control Widget -->
@@ -113,14 +119,30 @@
             </div>
         </div>
         <div class="widget-card-body">
-            <div class="slider-container">
-                <div class="slider-value-display">
-                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Sudut Rotasi</span>
-                    <h2 id="servo-text">90°</h2>
-                </div>
+            <!-- Servo Semicircular Gauge Visualization -->
+            <div class="servo-gauge-wrapper">
+                <svg viewBox="0 0 200 120" class="servo-gauge-svg">
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="var(--bg-input)" stroke-width="8" stroke-linecap="round"/>
+                    <path id="servo-gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#servo-grad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="125"/>
+                    <g id="servo-pointer-group" transform="translate(100, 100) rotate(0)">
+                        <line x1="0" y1="0" x2="0" y2="-75" stroke="var(--primary)" stroke-width="4" stroke-linecap="round" />
+                        <circle cx="0" cy="0" r="10" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="4"/>
+                        <circle cx="0" cy="0" r="4" fill="var(--primary)" />
+                    </g>
+                    <defs>
+                        <linearGradient id="servo-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="var(--accent)" />
+                            <stop offset="100%" stop-color="var(--primary)" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="servo-gauge-value" id="servo-text">90°</div>
+            </div>
+            
+            <div class="slider-container" style="padding: 0;">
                 <input type="range" min="0" max="180" value="90" id="servo-slider" class="range-input">
             </div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">Nilai akan dikirim setelah slider dilepas.</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Nilai dipublish saat slider dilepas.</div>
         </div>
     </div>
 
@@ -136,14 +158,17 @@
             </div>
         </div>
         <div class="widget-card-body">
+            <!-- Physical Dot-Matrix Style Preview Screen -->
+            <div class="lcd-preview-screen">
+                <div class="lcd-preview-text" id="lcd-preview-screen-text">> <span id="lcd-preview-val">Ketik pesan...</span><span class="lcd-blink-cursor"></span></div>
+            </div>
+
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="lcd-input">Pesan LCD (Max 32 Karakter)</label>
                 <div class="input-send-group">
                     <input type="text" id="lcd-input" placeholder="Ketik pesan..." class="form-control" maxlength="32">
                     <button id="lcd-btn" class="btn btn-primary">Kirim</button>
                 </div>
             </div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">Pesan akan ditampilkan di layar LCD ESP32 secara instan.</div>
         </div>
     </div>
 
@@ -316,11 +341,19 @@
                 if (suhuVal) {
                     suhuVal.innerHTML = message + ' °C';
                     
+                    // Update progress bar
+                    const suhuProgress = document.getElementById('suhu-progress');
+                    if (suhuProgress) {
+                        const tempNum = parseFloat(message) || 0;
+                        const pct = Math.min(100, Math.max(0, (tempNum / 50) * 100));
+                        suhuProgress.style.width = pct + '%';
+                    }
+
                     // Alert color logic for high temperature (> 30)
                     const tempCard = document.getElementById('temp-card');
                     if (parseFloat(message) > 30) {
-                        tempCard.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-                        tempCard.style.background = 'radial-gradient(circle at top right, rgba(239, 68, 68, 0.08), transparent), var(--bg-card)';
+                        tempCard.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+                        tempCard.style.background = 'radial-gradient(circle at top right, rgba(244, 63, 94, 0.08), transparent), var(--bg-card)';
                     } else {
                         tempCard.style.borderColor = '';
                         tempCard.style.background = '';
@@ -333,14 +366,25 @@
                 const humVal = document.getElementById('kelembapan-val');
                 if (humVal) {
                     humVal.innerHTML = message + ' %';
+                    
+                    // Update progress bar
+                    const humProgress = document.getElementById('kelembapan-progress');
+                    if (humProgress) {
+                        const humNum = parseFloat(message) || 0;
+                        humProgress.style.width = Math.min(100, Math.max(0, humNum)) + '%';
+                    }
                 }
             }
 
             // LCD Text Input update
             if (topic === 'fakhri/lcd') {
                 const lcdInput = document.getElementById('lcd-input');
+                const lcdPreview = document.getElementById('lcd-preview-val');
                 if (lcdInput && document.activeElement !== lcdInput) {
                     lcdInput.value = message;
+                }
+                if (lcdPreview) {
+                    lcdPreview.textContent = message || 'Ketik pesan...';
                 }
             }
 
@@ -348,8 +392,17 @@
             if (topic === 'fakhri/servo') {
                 const slider = document.getElementById('servo-slider');
                 const text = document.getElementById('servo-text');
-                if (slider) slider.value = message;
-                if (text) text.innerHTML = message + '°';
+                const pointer = document.getElementById('servo-pointer-group');
+                const track = document.getElementById('servo-gauge-track');
+                
+                const val = parseInt(message) || 0;
+                if (slider) slider.value = val;
+                if (text) text.innerHTML = val + '°';
+                if (pointer) pointer.setAttribute('transform', `translate(100, 100) rotate(${val - 90})`);
+                if (track) {
+                    const dashoffset = 251 - (val / 180) * 251;
+                    track.setAttribute('stroke-dashoffset', dashoffset);
+                }
             }
         }
 
@@ -498,13 +551,30 @@
             }
         });
 
+        // Update LCD preview locally when typing
+        lcdInput.addEventListener('input', function() {
+            const preview = document.getElementById('lcd-preview-val');
+            if (preview) {
+                preview.textContent = lcdInput.value || 'Ketik pesan...';
+            }
+        });
+
         // Servo Slider events
         const slider = document.getElementById('servo-slider');
         const sliderText = document.getElementById('servo-text');
 
-        // Realtime text update
+        // Realtime text update and local gauge rotation
         slider.addEventListener('input', function() {
-            sliderText.innerHTML = slider.value + '°';
+            const val = slider.value;
+            sliderText.innerHTML = val + '°';
+            
+            const pointer = document.getElementById('servo-pointer-group');
+            const track = document.getElementById('servo-gauge-track');
+            if (pointer) pointer.setAttribute('transform', `translate(100, 100) rotate(${val - 90})`);
+            if (track) {
+                const dashoffset = 251 - (val / 180) * 251;
+                track.setAttribute('stroke-dashoffset', dashoffset);
+            }
         });
 
         // Publish to MQTT only when mouseup / sliding finished
